@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Grammar Detective — 50 Cases</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:radial-gradient(1200px 600px at 50% -10%,#131c28 0%,#070b10 55%,#04060a 100%) fixed;
+  color:#e6edf3;min-height:100vh;padding-bottom:80px;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(14px);
+  background:linear-gradient(180deg,rgba(4,6,10,.96),rgba(4,6,10,.7));
+  border-bottom:1px solid #1b2430;padding:14px 0;margin-bottom:28px;
+}
+.hdr-inner{max-width:1180px;margin:0 auto;padding:0 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:900;font-size:1.05rem;letter-spacing:1.5px;background:linear-gradient(92deg,#f0cf72,#d4a537);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:#101720;border:1px solid #1e2937;border-radius:999px;padding:6px 14px;font-size:.74rem;color:#7d8b9c;font-weight:600}
+.pill b{color:#e8c25a}
+
+.hero{background:linear-gradient(150deg,#131b26,#0a1017);border:1px solid #1e2937;border-radius:20px;padding:30px 26px;margin-bottom:32px;position:relative;overflow:hidden}
+.hero::after{content:'🕵️';position:absolute;right:-30px;bottom:-50px;font-size:11rem;opacity:.05}
+.hero h1{font-size:1.7rem;font-weight:900;margin-bottom:10px;background:linear-gradient(92deg,#f5e0a3,#d4a537);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:#93a2b4;line-height:1.9;font-size:.92rem;max-width:720px}
+
+.level{margin-bottom:40px}
+.level-head{padding:14px 20px;border-radius:14px;margin-bottom:16px;background:linear-gradient(90deg,rgba(88,166,255,.12),transparent 70%);border-left:4px solid var(--c)}
+.level-head h2{font-size:1rem;font-weight:800;margin-bottom:4px}
+.level-head p{font-size:.76rem;color:#7d8b9c}
+.grid{display:grid;gap:13px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+
+.card{
+  cursor:pointer;font-family:inherit;text-align:left;color:#e6edf3;
+  background:linear-gradient(160deg,#161f2b,#0f161f);
+  border:1px solid #1e2937;border-radius:15px;
+  padding:15px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;
+  transition:.2s;
+}
+.card:hover{transform:translateY(-4px);border-color:#d4a537;box-shadow:0 14px 30px rgba(0,0,0,.6)}
+.card.solved{border-color:rgba(63,185,80,.5);background:linear-gradient(160deg,rgba(63,185,80,.06),#0f161f)}
+.card .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.card .num{font-size:.66rem;font-weight:800;letter-spacing:1.4px;color:#66748a}
+.card .st{font-size:.95rem}
+.card h3{font-size:.92rem;font-weight:800;line-height:1.45;margin-bottom:10px}
+.card .f{font-size:.66rem;font-weight:700;color:#e8c25a;background:rgba(212,165,55,.1);border:1px solid rgba(212,165,55,.24);padding:3px 9px;border-radius:6px;align-self:flex-start}
+
+.back{font-family:inherit;cursor:pointer;font-size:.83rem;font-weight:700;color:#93a2b4;background:#101720;border:1px solid #1e2937;border-radius:11px;padding:10px 20px;margin-bottom:20px;transition:.2s}
+.back:hover{color:#e8c25a;border-color:#d4a537}
+
+.case-hero{background:linear-gradient(150deg,#131b26,#0a1017);border:1px solid #1e2937;border-radius:18px;padding:24px;margin-bottom:20px}
+.ch-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ch-meta span{font-size:.66rem;font-weight:700;letter-spacing:.5px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:4px 11px;border-radius:999px;color:#a9b6c6}
+.case-hero h1{font-size:1.4rem;font-weight:900;margin-bottom:12px;color:#f5e0a3;line-height:1.3}
+.story{font-size:.88rem;line-height:2;color:#c3ced9;border-left:3px solid #d4a537;padding-left:14px}
+
+.hud{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#0f161f;border:1px solid #1e2937;border-radius:15px;padding:15px 20px;margin-bottom:18px}
+.hud .col{display:flex;flex-direction:column;gap:7px}
+.hud .lbl{font-size:.62rem;font-weight:800;letter-spacing:1.6px;color:#66748a}
+.slots{display:flex;gap:8px}
+.slot{width:42px;height:50px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;background:#080d12;border:2px dashed #26313f;color:#4a5768;transition:.25s}
+.slot.filled{border:2px solid #3fb950;color:#3fb950;background:rgba(63,185,80,.09);box-shadow:0 0 14px rgba(63,185,80,.2)}
+.keychip{font-size:.76rem;font-weight:800;padding:9px 16px;border-radius:999px;background:#080d12;border:1px solid #26313f;color:#66748a;transition:.25s}
+.keychip.have{background:rgba(212,165,55,.12);border-color:rgba(212,165,55,.55);color:#f0cf72}
+
+.scene{background:#0d131b;border:1px solid #1e2937;border-radius:17px;padding:20px;margin-bottom:18px}
+.scene .title{font-size:.76rem;font-weight:700;color:#7d8b9c;margin-bottom:16px}
+.items{display:grid;gap:11px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.item{cursor:pointer;font-family:inherit;color:#e6edf3;background:linear-gradient(160deg,#161f2b,#101720);border:1px solid #1e2937;border-radius:14px;padding:16px 8px 13px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:.2s}
+.item:hover{transform:translateY(-4px);border-color:#d4a537}
+.item .em{font-size:1.9rem;line-height:1}
+.item .nm{font-size:.74rem;font-weight:700;text-align:center;line-height:1.4;color:#c3ced9}
+.item .bg{font-size:.6rem;font-weight:800;padding:3px 10px;border-radius:999px;background:#080d12;border:1px solid #26313f;color:#66748a}
+.item .bg.lock{color:#e3b341;border-color:rgba(227,179,65,.32)}
+.item .bg.key{color:#f0cf72;border-color:rgba(212,165,55,.42)}
+.item.done{border-color:rgba(63,185,80,.42);background:linear-gradient(160deg,rgba(63,185,80,.07),#101720)}
+.item.done .bg{color:#3fb950;border-color:rgba(63,185,80,.4)}
+
+/* ---- SUSPECT PANEL ---- */
+.suspects{
+  background:linear-gradient(150deg,#1a0f0f,#0d0808);
+  border:1px solid rgba(248,81,73,.42);border-radius:17px;
+  padding:22px;margin-bottom:18px;
+  animation:pop .4s cubic-bezier(.2,1.3,.5,1);
+}
+.suspects h3{font-size:1.02rem;font-weight:900;color:#ff9492;margin-bottom:8px;letter-spacing:.3px}
+.suspects .sub{font-size:.8rem;color:#b0a0a0;line-height:1.8;margin-bottom:16px}
+.suspect-grid{display:grid;gap:11px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.suspect{
+  cursor:pointer;font-family:inherit;text-align:left;color:#e6edf3;
+  background:linear-gradient(160deg,#241a1a,#141010);
+  border:1.5px solid #3a2626;border-radius:13px;
+  padding:15px 14px;transition:.2s;
+  display:flex;flex-direction:column;gap:6px;
+}
+.suspect:hover:not(:disabled){transform:translateY(-3px);border-color:#f85149;background:linear-gradient(160deg,#2e1e1e,#1a1212)}
+.suspect:disabled{cursor:default}
+.suspect .sname{font-size:.88rem;font-weight:800;color:#f0cf72}
+.suspect .srole{font-size:.72rem;color:#b0a0a0;line-height:1.5}
+.suspect.wrong{border-color:rgba(248,81,73,.6);background:rgba(248,81,73,.09);animation:shake .4s}
+.suspect.right{border-color:#3fb950;background:rgba(63,185,80,.14)}
+.suspect.right .sname{color:#7ee787}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-7px)}
+  40%{transform:translateX(7px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+
+/* ---- SAFE ---- */
+.safe{background:#0f161f;border:1px solid #1e2937;border-radius:17px;padding:26px 20px;text-align:center;display:flex;flex-direction:column;gap:13px;align-items:center}
+.safe h3{font-size:1rem;font-weight:900;color:#f5e0a3}
+.safe p{font-size:.8rem;color:#7d8b9c;line-height:1.8;max-width:420px}
+.safe.locked{opacity:.55}
+.safe.locked .lockmsg{font-size:.78rem;font-weight:800;color:#e3b341}
+.coderow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+#codeIn{font-family:'JetBrains Mono',monospace;text-align:center;letter-spacing:14px;text-indent:14px;font-size:1.5rem;font-weight:700;width:200px;padding:13px 0;background:#050809;border:2px solid #26313f;border-radius:12px;color:#f0cf72;outline:none;transition:.2s}
+#codeIn:focus{border-color:#d4a537;box-shadow:0 0 0 4px rgba(212,165,55,.12)}
+#codeIn:disabled{opacity:.3}
+.btn{font-family:inherit;cursor:pointer;font-weight:800;font-size:.87rem;padding:14px 32px;border-radius:12px;border:none;background:linear-gradient(160deg,#f0cf72,#d4a537);color:#181206;transition:.2s}
+.btn:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-2px)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.msg{font-size:.82rem;font-weight:800;min-height:20px}
+.msg.err{color:#f85149}
+.msg.ok{color:#3fb950}
+
+.solved{background:linear-gradient(150deg,rgba(63,185,80,.14),rgba(63,185,80,.03));border:1px solid rgba(63,185,80,.45);border-radius:18px;padding:34px 24px;text-align:center;animation:pop .5s cubic-bezier(.2,1.4,.5,1)}
+@keyframes pop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+.solved .stamp{font-size:3.4rem;margin-bottom:10px}
+.solved h2{color:#3fb950;font-size:1.3rem;font-weight:900;margin-bottom:16px}
+.culprit{background:#080d13;border:1px solid #1e2937;border-radius:13px;padding:18px 20px;font-size:.9rem;line-height:2;color:#c3ced9;max-width:660px;margin:0 auto;text-align:left}
+.culprit b{color:#f0cf72}
+
+.mback{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(3,6,10,.85);backdrop-filter:blur(7px);animation:fade .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:linear-gradient(165deg,#18212e,#0d141d);border:1px solid #2c3a4d;border-radius:19px;padding:22px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;box-shadow:0 34px 80px rgba(0,0,0,.8);animation:pop .3s cubic-bezier(.2,1.3,.5,1)}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.tag{font-size:.64rem;font-weight:900;letter-spacing:1.5px;padding:6px 13px;border-radius:999px;background:rgba(212,165,55,.12);border:1px solid rgba(212,165,55,.38);color:#f0cf72}
+.x{background:transparent;border:none;color:#66748a;font-size:1.1rem;cursor:pointer;padding:6px 10px;border-radius:9px;font-family:inherit}
+.x:hover{color:#f85149;background:rgba(248,81,73,.1)}
+.mtitle{font-size:.98rem;font-weight:800;margin-bottom:6px}
+.mhint{font-size:.76rem;color:#7d8b9c;margin-bottom:14px;line-height:1.6}
+.investigation{
+  background:linear-gradient(150deg,#131b26,#0a1017);
+  border:1px solid #26313f;border-left:3px solid #d4a537;
+  border-radius:10px;padding:14px 16px;margin-bottom:16px;
+  font-size:.83rem;line-height:1.85;color:#b6c2d0;font-style:italic;
+}
+.investigation b{color:#e8c25a;font-style:normal}
+.qtext{font-size:1rem;line-height:1.9;font-weight:600;background:#070b11;border:1px solid #1e2937;border-radius:12px;padding:17px;margin-bottom:16px}
+.opts{display:grid;gap:9px}
+.opt{font-family:inherit;cursor:pointer;text-align:left;font-size:.89rem;font-weight:600;padding:13px 16px;border-radius:11px;background:#131b26;border:1.5px solid #1e2937;color:#dbe4ee;transition:.18s}
+.opt:hover:not(:disabled){border-color:#d4a537;background:#18222f;transform:translateX(4px)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:#3fb950;background:rgba(63,185,80,.14);color:#7ee787}
+.opt.wrong{border-color:#f85149;background:rgba(248,81,73,.11);color:#ff9492;opacity:.75}
+.fb{margin-top:14px;font-size:.85rem;font-weight:800;text-align:center;min-height:20px}
+.fb .ok{color:#3fb950}
+.fb .bad{color:#f85149}
+
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(100px);background:#18212e;border:1px solid #2c3a4d;color:#e6edf3;padding:13px 24px;border-radius:13px;font-size:.85rem;font-weight:700;z-index:300;transition:transform .4s cubic-bezier(.2,1.2,.4,1);box-shadow:0 18px 44px rgba(0,0,0,.7);max-width:90vw;text-align:center;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:640px){
+  .hero h1{font-size:1.3rem}
+  .case-hero h1{font-size:1.1rem}
+  .slot{width:34px;height:42px;font-size:1.05rem}
+  #codeIn{width:170px;letter-spacing:10px;text-indent:10px;font-size:1.25rem}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .items{grid-template-columns:repeat(auto-fill,minmax(115px,1fr))}
+  .suspect-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-inner">
+    <div class="brand">🔍 GRAMMAR DETECTIVE</div>
+    <div class="pills" id="pills"></div>
+  </div>
+</header>
+
+<div class="wrap" id="app"></div>
+<div id="modalRoot"></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+/* ============ RANDOM ============ */
+function rng(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function shuffle(a, r){
+  const c = a.slice();
+  for(let i=c.length-1;i>0;i--){
+    const j = Math.floor(r()*(i+1));
+    const t = c[i]; c[i]=c[j]; c[j]=t;
+  }
+  return c;
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============ QUESTION BANKS ============ */
+const QB = {
+1:[
+ {q:"She ___ my sister.", o:["is","are","am","be"], a:"is"},
+ {q:"___ you ten years old?", o:["Are","Is","Am","Do"], a:"Are"},
+ {q:"This is my brother. ___ name is Ali.", o:["His","Her","He","Him"], a:"His"},
+ {q:"I ___ got a new bike.", o:["have","has","am","is"], a:"have"},
+ {q:"There ___ two cats on the sofa.", o:["are","is","am","be"], a:"are"},
+ {q:"The books are ___ the table.", o:["on","in","at","of"], a:"on"},
+ {q:"___ is my mother.", o:["This","These","Those","They"], a:"This"},
+ {q:"I can ___ very well.", o:["swim","swimming","to swim","swims"], a:"swim"},
+ {q:"That is Sara's bag. It's ___ bag.", o:["her","his","its","their"], a:"her"},
+ {q:"We ___ students.", o:["are","is","am","be"], a:"are"},
+ {q:"She ___ like fish.", o:["doesn't","don't","isn't","aren't"], a:"doesn't"},
+ {q:"___ is your favourite colour?", o:["What","Who","Where","When"], a:"What"},
+ {q:"Look at ___ boys over there.", o:["those","this","that","these"], a:"those"},
+ {q:"My father ___ a doctor.", o:["is","are","am","be"], a:"is"},
+ {q:"I have got two ___.", o:["boxes","boxs","box","boxies"], a:"boxes"},
+ {q:"___ your mother a teacher?", o:["Is","Are","Am","Does"], a:"Is"},
+ {q:"The cat is ___ the box.", o:["in","on","at","to"], a:"in"},
+ {q:"Tom and I ___ friends.", o:["are","is","am","be"], a:"are"},
+ {q:"___ a book on the desk.", o:["There is","There are","It is","They are"], a:"There is"},
+ {q:"This is ___ apple.", o:["an","a","the","some"], a:"an"},
+ {q:"My sister ___ TV every evening.", o:["watches","watch","watching","is watch"], a:"watches"},
+ {q:"___ are my friends.", o:["They","He","She","It"], a:"They"},
+ {q:"I ___ from Canada.", o:["am","is","are","be"], a:"am"},
+ {q:"She ___ to school by bus.", o:["goes","go","going","is go"], a:"goes"},
+ {q:"The children ___ playing in the garden.", o:["are","is","am","be"], a:"are"}
+],
+2:[
+ {q:"Look! The baby ___ .", o:["is sleeping","sleeps","sleep","sleeping"], a:"is sleeping"},
+ {q:"There ___ any milk in the fridge.", o:["isn't","aren't","not is","doesn't"], a:"isn't"},
+ {q:"I'd like ___ water, please.", o:["some","any","a","many"], a:"some"},
+ {q:"My sister is ___ than me.", o:["taller","tall","tallest","more tall"], a:"taller"},
+ {q:"We ___ at the park yesterday.", o:["were","was","are","is"], a:"were"},
+ {q:"You ___ cross the road without looking.", o:["mustn't","must","can","should"], a:"mustn't"},
+ {q:"She ___ her homework every day.", o:["does","do","doing","is do"], a:"does"},
+ {q:"Are there ___ apples in the basket?", o:["any","some","a","much"], a:"any"},
+ {q:"This is the ___ film I have ever seen.", o:["best","better","good","well"], a:"best"},
+ {q:"He ___ football at the moment.", o:["is playing","plays","play","played"], a:"is playing"},
+ {q:"There ___ a lot of people at the party.", o:["were","was","is","be"], a:"were"},
+ {q:"I ___ swim when I was five.", o:["could","can","must","may"], a:"could"},
+ {q:"How ___ eggs do we need?", o:["many","much","some","any"], a:"many"},
+ {q:"My brother is good ___ maths.", o:["at","in","on","for"], a:"at"},
+ {q:"She ___ watch TV in the morning.", o:["doesn't","don't","isn't","aren't"], a:"doesn't"},
+ {q:"The weather is ___ today than yesterday.", o:["worse","bad","worst","badly"], a:"worse"},
+ {q:"We ___ to the cinema last night.", o:["went","go","going","goes"], a:"went"},
+ {q:"___ you like some tea?", o:["Would","Do","Are","Will"], a:"Would"},
+ {q:"He is the ___ student in the class.", o:["cleverest","clever","cleverer","more clever"], a:"cleverest"},
+ {q:"I ___ my teeth twice a day.", o:["brush","brushes","brushing","am brush"], a:"brush"},
+ {q:"There isn't ___ bread left.", o:["much","many","a","some"], a:"much"},
+ {q:"They ___ TV when I arrived.", o:["were watching","was watching","watched","watch"], a:"were watching"},
+ {q:"You ___ be quiet in the library.", o:["must","mustn't","can't","needn't"], a:"must"},
+ {q:"I was born ___ 2010.", o:["in","on","at","of"], a:"in"},
+ {q:"He didn't ___ to school yesterday.", o:["go","went","going","goes"], a:"go"}
+],
+3:[
+ {q:"She ___ the letter yesterday.", o:["wrote","writes","written","writing"], a:"wrote"},
+ {q:"I have never ___ to London.", o:["been","be","was","went"], a:"been"},
+ {q:"They ___ going to visit us next week.", o:["are","is","am","be"], a:"are"},
+ {q:"It ___ rain tomorrow.", o:["will","is","was","does"], a:"will"},
+ {q:"He ran ___ than anyone else.", o:["faster","fast","fastest","more fast"], a:"faster"},
+ {q:"We ___ dinner when the phone rang.", o:["were having","had","have","having"], a:"were having"},
+ {q:"Have you ___ seen a ghost?", o:["ever","never","already","yet"], a:"ever"},
+ {q:"She has lived here ___ 2015.", o:["since","for","from","during"], a:"since"},
+ {q:"This is the ___ book in the library.", o:["most interesting","interestinger","more interesting","interestingest"], a:"most interesting"},
+ {q:"I ___ my keys yesterday.", o:["lost","lose","losing","have lost"], a:"lost"},
+ {q:"He said he ___ tired.", o:["was","is","be","been"], a:"was"},
+ {q:"If it rains, we ___ at home.", o:["will stay","stay","stayed","would stay"], a:"will stay"},
+ {q:"She ___ already finished her work.", o:["has","have","is","was"], a:"has"},
+ {q:"They ___ not go to the party last night.", o:["did","do","does","were"], a:"did"},
+ {q:"I've known him ___ ten years.", o:["for","since","from","during"], a:"for"},
+ {q:"The children ___ playing outside when it started to rain.", o:["were","was","are","is"], a:"were"},
+ {q:"You ___ better see a doctor.", o:["had","have","has","having"], a:"had"},
+ {q:"He is ___ of the two brothers.", o:["the taller","taller","tallest","the tallest"], a:"the taller"},
+ {q:"By the time we arrived, the film ___.", o:["had started","started","has started","starts"], a:"had started"},
+ {q:"She told me she ___ come later.", o:["would","will","was","is"], a:"would"},
+ {q:"This is the man ___ car was stolen.", o:["whose","who","which","whom"], a:"whose"},
+ {q:"___ you ever been to Paris?", o:["Have","Do","Did","Are"], a:"Have"},
+ {q:"He ___ in Tehran since 2010.", o:["has lived","lived","lives","is living"], a:"has lived"},
+ {q:"We ___ to the beach every summer when I was a child.", o:["went","go","have gone","were going"], a:"went"}
+],
+4:[
+ {q:"The window ___ by the storm.", o:["was broken","broke","has broken","is breaking"], a:"was broken"},
+ {q:"If I ___ you, I would apologize.", o:["were","am","was being","be"], a:"were"},
+ {q:"The man ___ car was stolen called the police.", o:["whose","who","which","whom"], a:"whose"},
+ {q:"She said she ___ the film the night before.", o:["had seen","saw","has seen","sees"], a:"had seen"},
+ {q:"You ___ have told me earlier!", o:["should","must","can","will"], a:"should"},
+ {q:"The letter ___ tomorrow.", o:["will be sent","will send","is sending","sent"], a:"will be sent"},
+ {q:"He ___ be at home; his car is outside.", o:["must","can't","should","needn't"], a:"must"},
+ {q:"By next year, she ___ her degree.", o:["will have finished","will finish","finishes","has finished"], a:"will have finished"},
+ {q:"The book ___ in 1920.", o:["was published","published","has published","is publishing"], a:"was published"},
+ {q:"If it ___ tomorrow, we'll cancel the trip.", o:["rains","will rain","rained","would rain"], a:"rains"},
+ {q:"It's the first time I ___ such a thing.", o:["have seen","saw","see","had seen"], a:"have seen"},
+ {q:"He denied ___ the money.", o:["stealing","to steal","steal","stole"], a:"stealing"},
+ {q:"I look forward to ___ from you.", o:["hearing","hear","heard","hears"], a:"hearing"},
+ {q:"She ___ have missed the train; she's never late.", o:["can't","must","should","may"], a:"can't"},
+ {q:"This is the restaurant ___ we first met.", o:["where","which","that","who"], a:"where"},
+ {q:"He asked me where I ___ from.", o:["came","come","coming","comes"], a:"came"},
+ {q:"The report needs ___ by Friday.", o:["to be finished","finishing","finish","finished"], a:"to be finished"},
+ {q:"Unless you hurry, you ___ the bus.", o:["will miss","miss","missed","would miss"], a:"will miss"},
+ {q:"The suspect ___ to have left the country.", o:["is believed","believes","believed","is believing"], a:"is believed"},
+ {q:"I wish I ___ studied harder.", o:["had","have","would","did"], a:"had"},
+ {q:"It's high time we ___ .", o:["left","leave","will leave","leaving"], a:"left"},
+ {q:"He is said ___ a genius.", o:["to be","be","being","been"], a:"to be"},
+ {q:"She would rather ___ at home tonight.", o:["stay","stayed","staying","to stay"], a:"stay"},
+ {q:"___ the bad weather, the match went ahead.", o:["Despite","Although","However","Because"], a:"Despite"}
+],
+5:[
+ {q:"Had I known, I ___ differently.", o:["would have acted","would act","had acted","acted"], a:"would have acted"},
+ {q:"Hardly ___ when the phone rang.", o:["had I sat down","I had sat down","I sat down","did I sat down"], a:"had I sat down"},
+ {q:"He ___ have taken the money, but we can't prove it.", o:["might","must","can't","needn't"], a:"might"},
+ {q:"It is essential that he ___ present.", o:["be","is","was","being"], a:"be"},
+ {q:"___ the truth, he would have been forgiven.", o:["Had he told","If he told","Did he tell","He had told"], a:"Had he told"},
+ {q:"Never ___ such a beautiful sunset.", o:["have I seen","I have seen","I saw","did I saw"], a:"have I seen"},
+ {q:"She would rather ___ at home last night.", o:["have stayed","stayed","stay","staying"], a:"have stayed"},
+ {q:"The committee, ___ members were divided, postponed the vote.", o:["whose","which","who","whom"], a:"whose"},
+ {q:"No sooner ___ than it began to rain.", o:["had we left","we had left","did we leave","we left"], a:"had we left"},
+ {q:"He is reputed ___ a fortune in real estate.", o:["to have made","to make","making","made"], a:"to have made"},
+ {q:"But for your help, I ___ failed.", o:["would have","would","had","will have"], a:"would have"},
+ {q:"Little ___ that he was being watched.", o:["did he know","he knew","he did know","knew he"], a:"did he know"},
+ {q:"I object to ___ treated like a child.", o:["being","be","have been","been"], a:"being"},
+ {q:"Were it not for his alibi, he ___ charged.", o:["would be","will be","is","had been"], a:"would be"},
+ {q:"He must ___ forgotten our appointment.", o:["have","has","had","having"], a:"have"},
+ {q:"Seldom ___ such dedication.", o:["have we witnessed","we have witnessed","we witnessed","did we witnessed"], a:"have we witnessed"},
+ {q:"It was not until midnight ___ he arrived.", o:["that","when","which","then"], a:"that"},
+ {q:"The prisoner is alleged ___ escaped through a tunnel.", o:["to have","to having","have","having"], a:"to have"},
+ {q:"___ more carefully, he wouldn't have crashed.", o:["Had he driven","If he drove","Did he drive","He had driven"], a:"Had he driven"},
+ {q:"Not only ___ late, but he also forgot the keys.", o:["was he","he was","he is","is he"], a:"was he"},
+ {q:"Such ___ his anger that he could not speak.", o:["was","is","were","had"], a:"was"}
+]
+};
+
+/* ============ FLAVOR / ITEMS / ROOMS ============ */
+const FLAVOR = [
+ "The scent of jasmine still hangs in the air. Someone left in a hurry.",
+ "A half-finished cup of tea. It is still faintly warm.",
+ "A footprint on the carpet — size 42.",
+ "A crumpled note in the bin: just half a phone number.",
+ "The window is ajar, but the screen is intact and untouched.",
+ "Cigarette ash beneath the flowerpot — someone hid here.",
+ "A scrap of blue fabric snagged on the drawer's edge.",
+ "A clock stopped at 3:17. Its battery is dead.",
+ "A fingerprint on the glass of a painting, but the dust beneath is undisturbed.",
+ "A note in hurried handwriting: “Tomorrow morning, same place.”",
+ "The smell of fresh paint drifts from the corner of the room.",
+ "A small metal button glints on the floor.",
+ "A notebook with a single page torn out.",
+ "A cracked ceramic pot, its soil recently disturbed.",
+ "A coffee ring on the table, perfectly circular.",
+ "The curtain is pulled fully aside on one side only.",
+ "A fresh nail hole in the wall, where something heavy once hung.",
+ "An empty birdcage. The door is open."
+];
+
+const ITEM_POOL = [
+ {n:"Desk Drawer", e:"🗄️"}, {n:"Oil Painting", e:"🖼️"}, {n:"Wall Clock", e:"🕰️"},
+ {n:"Old Suitcase", e:"🧳"}, {n:"Leather Briefcase", e:"💼"}, {n:"Wooden Box", e:"📦"},
+ {n:"Worn Book", e:"📕"}, {n:"Old Radio", e:"📻"}, {n:"Landline Phone", e:"☎️"},
+ {n:"Candlestick", e:"🕯️"}, {n:"Door Lock", e:"🔒"}, {n:"Crumpled Letter", e:"📜"},
+ {n:"Laptop", e:"💻"}, {n:"Guitar", e:"🎸"}, {n:"Teddy Bear", e:"🧸"},
+ {n:"Pen Holder", e:"🖊️"}, {n:"Teacup", e:"🥛"}, {n:"Running Shoe", e:"👟"},
+ {n:"Grey Coat", e:"🧥"}, {n:"Fedora Hat", e:"🎩"}, {n:"Camera", e:"📷"},
+ {n:"Old Mirror", e:"🪞"}, {n:"City Map", e:"🗺️"}, {n:"Music Box", e:"🎵"},
+ {n:"Sports Bag", e:"🎒"}, {n:"Chocolate Tin", e:"🍫"}, {n:"Ceramic Vase", e:"🏺"},
+ {n:"Toolbox", e:"🧰"}, {n:"Fireplace", e:"🔥"}, {n:"Grandfather Clock", e:"⏰"}
+];
+
+const ROOMS = [
+ {n:"Living Room", e:"🛋️"}, {n:"Kitchen", e:"🍳"}, {n:"Bedroom", e:"🛏️"},
+ {n:"Basement", e:"🕯️"}, {n:"Study", e:"🖥️"}, {n:"Storage Room", e:"📦"},
+ {n:"Backyard", e:"🌳"}, {n:"Garage", e:"🚗"}, {n:"Library", e:"📚"},
+ {n:"Balcony", e:"🌿"}, {n:"Guest Room", e:"🚪"}, {n:"Back Corridor", e:"🧭"},
+ {n:"Attic", e:"🏚️"}, {n:"Wine Cellar", e:"🍷"}, {n:"Workshop", e:"🔧"}
+];
+
+/* ============ LEVELS ============ */
+const LEVELS = [
+ {id:1, name:"Level 1", sub:"Family & Friends 1", color:"#58a6ff",
+  focus:"Verb to be · Articles · this/that · have got · Present Simple"},
+ {id:2, name:"Level 2", sub:"Family & Friends 2", color:"#3fb950",
+  focus:"Present Continuous · some/any · Comparatives · Past Simple · Modals"},
+ {id:3, name:"Level 3", sub:"Intermediate", color:"#a371f7",
+  focus:"Present Perfect · Passive · Conditionals · will/going to"},
+ {id:4, name:"Level 4", sub:"Upper-Intermediate", color:"#d4a537",
+  focus:"Passive Voice · Relative Clauses · Reported Speech · Modals of Deduction"},
+ {id:5, name:"Level 5", sub:"Advanced", color:"#f85149",
+  focus:"Inversion · Subjunctive · Third Conditional · Cleft Sentences"}
+];
+
+/* ============ 50 CASES ============ */
+const CASES_RAW = [
+/* LEVEL 1 (10) */
+{lv:1,t:"The Missing Family Photo",s:"Mrs. Rezaei's family photograph has vanished from the mantelpiece. Every window is shut and nobody has left the house.",
+ c:"Arash, the youngest son — he borrowed the photo for a school project and forgot to return it.",f:"Verb to be & possessive adjectives"},
+{lv:1,t:"The Blue Cat",s:"The neighbour's cat turned blue overnight! Only three people were in the yard yesterday. Blue colouring is still on someone's brush.",
+ c:"Sara — she dyed the cat with food colouring to win the school contest.",f:"Articles: a / an / the"},
+{lv:1,t:"The Broken Toy Car",s:"Saman's toy car was thrown down the stairs and smashed. Three children were in the house and not one is talking.",
+ c:"Kian — he threw the car down the stairs while playing too roughly.",f:"this / that / these / those"},
+{lv:1,t:"The Empty Lunchbox",s:"The teacher's lunch disappeared from the staff fridge, yet the empty box was found in the recycling bin.",
+ c:"The PE coach — he was hungry and ate the lunch, then hid the box.",f:"there is / there are"},
+{lv:1,t:"The Lost School Bag",s:"Maryam's school bag went missing in the corridor. Muddy footprints are printed along the floor.",
+ c:"The caretaker's son — he moved the bag so it would not get stolen.",f:"Prepositions of place"},
+{lv:1,t:"The Red Balloon Mystery",s:"A red party balloon was released from the balcony and landed in the neighbour's tree. The evening wind came from the north.",
+ c:"The neighbour's daughter — she let the balloon go on purpose.",f:"can / can't"},
+{lv:1,t:"The Missing Birthday Cake",s:"The birthday cake was half-eaten before the party even started! Frosting is still smeared along the edge of the table.",
+ c:"Uncle Rahim — he took a slice home before the guests arrived.",f:"Present Simple"},
+{lv:1,t:"The Strange Night Noise",s:"Every night at 2 a.m. a rustling sound drifts out of the living room. Nobody sleeps in there.",
+ c:"The family dog — it was playing with a bag of crisps at night.",f:"Wh- questions"},
+{lv:1,t:"The Garden Secret",s:"The flowers in the garden were moved overnight. Fresh shovel marks are visible in the soil.",
+ c:"The gardener — he moved the flowers to graft a new species.",f:"Plurals"},
+{lv:1,t:"The Missing Red Pencil",s:"The teacher's red pencil vanished from the pencil case, and teeth marks are visible on the blue pencil.",
+ c:"The top student — he borrowed it and forgot to put it back.",f:"have got / has got"},
+
+/* LEVEL 2 (10) */
+{lv:2,t:"The Vanished Violin",s:"A young musician's violin disappeared from the practice room. The window is open and it smells of rain.",
+ c:"The bandmate — he took the violin for an urgent repair.",f:"Present Continuous"},
+{lv:2,t:"The Chocolate Thief",s:"Every chocolate in the sideboard was eaten, and all the wrappers are hidden under the sofa.",
+ c:"The cousin — he crept down at night and ate them all.",f:"some / any"},
+{lv:2,t:"The Silent Bell",s:"The school bell failed for an entire day. The wires are fine, but the breaker is down.",
+ c:"The janitor — he forgot to flip the breaker back up.",f:"Past: was / were"},
+{lv:2,t:"The Locked Classroom",s:"The maths room was locked from the inside, yet nobody is in it. The only window is bolted from the outside.",
+ c:"The teacher — she locked it from inside by mistake and climbed out.",f:"must / mustn't"},
+{lv:2,t:"The Lost Mascot",s:"The team's lucky mascot is gone, and the team has a big match tomorrow morning.",
+ c:"The goalkeeper — he took the mascot home for luck.",f:"Comparative adjectives"},
+{lv:2,t:"The Swapped Homework",s:"Two students' notebooks were swapped, and the handwriting looks far too similar.",
+ c:"The twins — they swapped the notebooks by accident.",f:"Adverbs of frequency"},
+{lv:2,t:"Footprints in the Snow",s:"It snowed last night. Footprints lead from the shed to the house, but none come back.",
+ c:"The father — he took firewood and returned through the back door.",f:"Past Continuous"},
+{lv:2,t:"The Rare Library Book",s:"A rare library book is missing, and one member's card has been torn to pieces.",
+ c:"The final-year student — he took the book without signing it out.",f:"Past Simple"},
+{lv:2,t:"The Broken Lab Window",s:"The laboratory window is smashed, but no ball can be found anywhere in the yard.",
+ c:"The lab assistant — she broke it with a metal rod during an experiment.",f:"Prepositions of time"},
+{lv:2,t:"The Stolen Recipe",s:"The restaurant's recipe book is missing, and the smell of vanilla lingers in the manager's office.",
+ c:"The apprentice cook — she took the book home to practise in secret.",f:"Would you like ...?"},
+
+/* LEVEL 3 (5) */
+{lv:3,t:"The Midnight Train Mystery",s:"On the midnight train a passenger's suitcase vanished. Nobody got on or off at the last station.",
+ c:"The passenger beside him — he took the suitcase by mistake.",f:"Past Simple & Past Continuous"},
+{lv:3,t:"The Moving Painting",s:"A painting in the museum shifted a few centimetres. The dust along the frame is completely undisturbed.",
+ c:"The night guard — he removed it for an unauthorised cleaning.",f:"Present Perfect"},
+{lv:3,t:"The Counterfeit Coin",s:"An antique coin at auction turned out to be fake. Its weight differs from the original by three grams.",
+ c:"The auctioneer — he swapped the real coin for a replica.",f:"Passive Voice (simple)"},
+{lv:3,t:"The Foggy Harbor Secret",s:"A boat left the harbour at night, yet its engine is broken and no sound of it was heard.",
+ c:"The old fisherman — he rowed the boat out silently.",f:"will & going to"},
+{lv:3,t:"The Missing Manuscript",s:"An old manuscript vanished from the university library shelf. Only a scrap of paper remains in its place.",
+ c:"The literature professor — he took it for his research.",f:"Present Perfect + since / for"},
+
+/* LEVEL 4 (20) */
+{lv:4,t:"The Watchmaker's Alibi",s:"The watchmaker claims he was in his workshop at 9 p.m., but every clock in that workshop is 20 minutes slow.",
+ c:"The apprentice — he set the clocks back to build a false alibi for his master.",f:"Present Perfect"},
+{lv:4,t:"The Poisoned Teacup",s:"A teacup was left on the table with a white residue at the bottom. Three people had been in the room that evening.",
+ c:"The maid — she put sleeping powder in the tea to avoid being robbed.",f:"Passive Voice"},
+{lv:4,t:"The Vanished Diamond",s:"The diamond is gone from the safe, yet the safe was never opened and there are no fresh fingerprints.",
+ c:"The owner — he took it for valuation and simply forgot to tell anyone.",f:"Second Conditional"},
+{lv:4,t:"The Two Passports",s:"Two passports bearing the same photograph were found at the airport check-in desk.",
+ c:"The twin brother — he borrowed his brother's passport for the trip.",f:"Relative Clauses"},
+{lv:4,t:"The Silent Witness",s:"The witness says nothing at all, yet every morning he stares at one particular spot on the wall.",
+ c:"The witness — he was silently showing where the documents had been hidden.",f:"Reported Speech"},
+{lv:4,t:"The Forgotten Basement",s:"In the basement of an old house there is a door that appears on no floor plan of the building.",
+ c:"The architect — he built the hidden room to store private documents.",f:"Modal Verbs of Deduction"},
+{lv:4,t:"The Red Umbrella Case",s:"A red umbrella was found on a bright sunny day, and its fabric is completely soaked through.",
+ c:"The taxi driver — he left the umbrella behind for a passenger.",f:"Past Perfect"},
+{lv:4,t:"The Handwriting on the Wall",s:"Behind the wallpaper, an old letter was discovered whose date matches the missing case exactly.",
+ c:"The previous owner — he hid the letter before selling the house.",f:"Passive Perfect"},
+{lv:4,t:"The Last Letter",s:"The victim's final letter was never posted, yet the envelope bears a clear postmark.",
+ c:"The postman — he stamped it and then forgot to send it.",f:"First Conditional"},
+{lv:4,t:"The Broken Alibi",s:"The suspect says he was at the cinema all night, but his ticket is for the morning show.",
+ c:"The suspect — he showed the wrong ticket and destroyed his own alibi.",f:"Modals of Obligation"},
+{lv:4,t:"The Ghost of Room 13",s:"The lights in Room 13 switch themselves on every night, and nobody is ever in there.",
+ c:"The electrician — he installed a faulty timer and never reported it.",f:"Passive with Modals"},
+{lv:4,t:"The Missing Masterpiece",s:"A priceless painting vanished from the gallery, yet its frame still hangs perfectly on the wall.",
+ c:"The artist — he took the painting away for restoration.",f:"Relative Clauses (non-defining)"},
+{lv:4,t:"The Empty Suitcase",s:"A suitcase was found at the station completely empty, yet it weighs far more than it should.",
+ c:"The traveller — he lined the suitcase with a hidden double wall.",f:"Compound Nouns & Prepositions"},
+{lv:4,t:"The Night Guard's Secret",s:"The night guard disappears from the security cameras for ten minutes at 3 a.m. every night.",
+ c:"The guard — he was quietly checking the back door on a private route.",f:"Adverbs of Manner"},
+{lv:4,t:"The Silver Key Case",s:"A silver key was found in a bank deposit box, but its registered owner died years ago.",
+ c:"The bank manager — he kept the key aside for an ongoing investigation.",f:"Passive in Different Tenses"},
+{lv:4,t:"The Twelve O'Clock Mystery",s:"At exactly 12:00 the power to the whole building failed and the cameras went dark for 40 seconds.",
+ c:"The employee — he tripped the main fuse on purpose.",f:"Past Perfect Continuous"},
+{lv:4,t:"Letters Without a Sender",s:"Every week a letter with no sender arrives at the office, and they all share the same handwriting.",
+ c:"The secretary — she was writing the letters herself.",f:"Reported Statements"},
+{lv:4,t:"The Shadow on the Wall",s:"Every night the neighbours see a tall shadow moving across the wall of the empty house next door.",
+ c:"The neighbour's child — he was playing with a torch through the window.",f:"Verbs of the Senses"},
+{lv:4,t:"Lost in the Archive",s:"A file vanished from the archive, yet its reference number is still written in the register.",
+ c:"The archivist — he took the file away for binding and forgot to log it.",f:"Countable & Uncountable"},
+{lv:4,t:"The Silent Phone",s:"The office phone rings at midnight, and the caller on the other end only breathes.",
+ c:"The night watchman — he called to test whether the line was still live.",f:"Question Tags"},
+
+/* LEVEL 5 (5) */
+{lv:5,t:"The Perfect Crime",s:"A flawless robbery: no fingerprints, no forced entry, no witnesses. Yet a single detail betrays the thief.",
+ c:"The insurance agent — he planned the entire robbery to claim the payout.",f:"Inversion & Third Conditional"},
+{lv:5,t:"The Locked Study",s:"A man was found in a study locked from the inside. The only window is twelve metres above the ground.",
+ c:"His business partner — he used the hidden service lift behind the bookshelf.",f:"Subjunctive & Inversion"},
+{lv:5,t:"The Double Bluff",s:"Two suspects each accuse the other. Both alibis are perfect. Only one of them can possibly be true.",
+ c:"The younger brother — he forged both alibis to frame his own sibling.",f:"Modal Perfect & Speculation"},
+{lv:5,t:"The Vanishing Act",s:"A magician disappeared from a locked trunk on stage and was never seen again.",
+ c:"The magician himself — he staged his own disappearance to escape his debts.",f:"Cleft Sentences & Emphasis"},
+{lv:5,t:"The Final Confession",s:"A dying man's written confession contradicts every single piece of evidence in the case.",
+ c:"The nurse — she wrote the confession to protect the real culprit.",f:"Advanced Inversion & Ellipsis"}
+];
+
+/* ============ INVESTIGATION FLAVOR ============ */
+const INVESTIGATION_INTROS = [
+ "You lean in close and examine the object carefully.",
+ "Your fingertips trace the surface, searching for anything out of place.",
+ "You lift the object and turn it over in the dim light.",
+ "A thin layer of dust rises as you search.",
+ "You crouch down and inspect every corner of the item."
+];
+
+const FINDINGS_DIGIT = [
+ "Hidden inside, you find a folded slip of paper with a coded mark.",
+ "A small compartment holds a scrap bearing a single digit.",
+ "Wedged behind the panel, a narrow strip of paper shows a number.",
+ "Beneath a false bottom, a tiny note reveals part of the code.",
+ "A sealed envelope is tucked away, and inside is a digit."
+];
+
+const FINDINGS_KEY = [
+ "A small combination lock seals it. You must solve the grammar lock to open it.",
+ "The lock resists — a grammar puzzle guards whatever lies inside.",
+ "A heavy padlock is fastened with a riddle. Solve it to reveal the key.",
+ "The lid is bolted shut with a coded mechanism. A grammar lock blocks you.",
+ "A mysterious lock glows faintly. Answer the grammar question to break the seal."
+];
+
+/* ============ SUSPECT GENERATION ============ */
+const SUSPECT_POOL = [
+ "Mr. Ahmadi", "Mrs. Karimi", "Dr. Sadeghi", "Miss Tehrani",
+ "Mr. Hosseini", "Ms. Rahimi", "Mr. Naderi", "Mrs. Jafari",
+ "Mr. Moradi", "Ms. Kazemi", "Mr. Bagheri", "Mrs. Soltani",
+ "Mr. Sadeghi", "Ms. Ebrahimi", "Mr. Nikpour", "Mrs. Yazdani",
+ "Mr. Rezaei", "Ms. Bahrami", "Mr. Kaveh", "Mrs. Amini"
+];
+
+const SUSPECT_ROLES = [
+ "Neighbour", "Business partner", "Family friend", "Colleague",
+ "Housekeeper", "Driver", "Gardener", "Personal assistant",
+ "Postman", "Security guard", "Mechanic", "Librarian",
+ "Chef", "Pharmacist", "Journalist", "Architect"
+];
+
+const SUSPECT_CACHE = {};
+
+function culpritName(c){
+  const part = String(c.culprit).split(/[—–,]/)[0];
+  return part.trim() || "Unknown";
+}
+
+function getSuspects(c){
+  if(SUSPECT_CACHE[c.id]) return SUSPECT_CACHE[c.id];
+  const r = rng(c.id * 31337 + 999);
+  const real = culpritName(c);
+  const pool = SUSPECT_POOL.filter(n => n !== real);
+  const others = shuffle(pool, r).slice(0, 3);
+  const names = shuffle([real].concat(others), r);
+  const roles = shuffle(SUSPECT_ROLES, r).slice(0, 4);
+  const list = names.map((n, i) => ({ name: n, role: roles[i], isCulprit: n === real }));
+  SUSPECT_CACHE[c.id] = list;
+  return list;
+}
+
+/* ============ BUILD CASES ============ */
+function buildCases(){
+  return CASES_RAW.map((raw, idx) => {
+    const r = rng(idx * 7919 + 104729);
+    const bank = QB[raw.lv];
+    const pickedQs = shuffle(bank, r).slice(0, 4);
+    const chosen = shuffle(ITEM_POOL, r).slice(0, 5);
+    const roles = shuffle(['d','d','d','k','f'], r);
+    const digits = shuffle([0,1,2,3,4,5,6,7,8,9], r).slice(0, 3);
+
+    let qi = 0;
+    const items = chosen.map((it, i) => {
+      const role = roles[i];
+      if(role === 'f'){
+        return { name: it.n, emoji: it.e, role: 'flavor',
+                 clue: FLAVOR[Math.floor(r() * FLAVOR.length)] };
+      }
+      const q = pickedQs[qi++];
+      const opts = shuffle(q.o, r);
+      const question = { text: q.q, options: opts, answer: q.a };
+      if(role === 'd'){
+        return { name: it.n, emoji: it.e, role: 'digit', q: question, slot: 0, digit: 0 };
+      }
+      return { name: it.n, emoji: it.e, role: 'key', q: question };
+    });
+
+    let s = 0;
+    items.forEach(it => {
+      if(it.role === 'digit'){ it.slot = s; it.digit = digits[s]; s++; }
+    });
+
+    return {
+      id: idx,
+      level: raw.lv,
+      title: raw.t,
+      story: raw.s,
+      culprit: raw.c,
+      focus: raw.f,
+      items: items,
+      code: digits.join(''),
+      room: ROOMS[Math.floor(r() * ROOMS.length)]
+    };
+  });
+}
+
+const CASES = buildCases();
+
+/* ============ PROGRESS ============ */
+const PROG = new Map();
+function getP(id){
+  if(!PROG.has(id)){
+    PROG.set(id, {
+      found: new Set(),
+      digits:[null,null,null],
+      hasKey:false,
+      culpritPicked:false,
+      solved:false
+    });
+  }
+  return PROG.get(id);
+}
+function peekP(id){
+  return PROG.get(id) || {
+    found:new Set(), digits:[null,null,null],
+    hasKey:false, culpritPicked:false, solved:false
+  };
+}
+
+/* ============ TOAST ============ */
+let toastT = null;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+/* ============ MODAL ============ */
+function closeModal(){
+  document.getElementById('modalRoot').innerHTML = '';
+}
+
+function openQuestion(c, itemIdx){
+  const cObj = CASES[c];
+  const item = cObj.items[itemIdx];
+  if(!item || !item.q) return;
+
+  const root = document.getElementById('modalRoot');
+  const isKey = item.role === 'key';
+
+  const introIdx = Math.floor(Math.random() * INVESTIGATION_INTROS.length);
+  const findIdx = Math.floor(Math.random() * (isKey ? FINDINGS_KEY.length : FINDINGS_DIGIT.length));
+  const introText = INVESTIGATION_INTROS[introIdx];
+  const findingText = isKey ? FINDINGS_KEY[findIdx] : FINDINGS_DIGIT[findIdx];
+
+  root.innerHTML =
+    '<div class="mback" id="mback">' +
+      '<div class="modal">' +
+        '<div class="mhead">' +
+          '<span class="tag">' + (isKey ? '🔑 KEY LOCK' : '🔒 CODE LOCK') + '</span>' +
+          '<button class="x" id="mx">✕</button>' +
+        '</div>' +
+        '<div class="mtitle">' + esc(item.name) + '</div>' +
+        '<div class="investigation">' +
+          esc(introText) + ' <b>' + esc(findingText) + '</b>' +
+        '</div>' +
+        '<div class="mhint">' + (isKey
+          ? 'Answer correctly to unlock the hidden key.'
+          : 'Answer correctly to reveal one digit of the safe code.') +
+        '</div>' +
+        '<div class="qtext">' + esc(item.q.text) + '</div>' +
+        '<div class="opts" id="opts"></div>' +
+        '<div class="fb" id="fb"></div>' +
+      '</div>' +
+    '</div>';
+
+  const optsBox = document.getElementById('opts');
+  const fb = document.getElementById('fb');
+
+  item.q.options.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = opt;
+    b.onclick = () => {
+      const all = optsBox.querySelectorAll('.opt');
+      all.forEach(x => x.disabled = true);
+      if(opt === item.q.answer){
+        b.classList.add('right');
+        const p = getP(c);
+        p.found.add(itemIdx);
+        if(item.role === 'key'){
+          p.hasKey = true;
+          fb.innerHTML = '<span class="ok">✓ Correct — you found the KEY!</span>';
+          toast('🔑 Key acquired!');
+        } else {
+          p.digits[item.slot] = item.digit;
+          fb.innerHTML = '<span class="ok">✓ Correct — digit ' + item.digit + ' unlocked!</span>';
+          toast('🔓 Digit ' + item.digit + ' unlocked');
+        }
+        setTimeout(() => { closeModal(); render(); }, 1100);
+      } else {
+        b.classList.add('wrong');
+        all.forEach(x => {
+          if(x.textContent === item.q.answer) x.classList.add('right');
+        });
+        fb.innerHTML = '<span class="bad">✗ Not quite. The correct answer is: ' + esc(item.q.answer) + '</span>';
+        setTimeout(() => { closeModal(); render(); }, 1800);
+      }
+    };
+    optsBox.appendChild(b);
+  });
+
+  document.getElementById('mx').onclick = closeModal;
+  document.getElementById('mback').onclick = e => {
+    if(e.target.id === 'mback') closeModal();
+  };
+}
+
+/* ============ RENDER: HOME ============ */
+function renderHome(){
+  let solvedCount = 0;
+  CASES.forEach(c => { if(getP(c.id).solved) solvedCount++; });
+
+  document.getElementById('pills').innerHTML =
+    '<span class="pill">Solved <b>' + solvedCount + ' / ' + CASES.length + '</b></span>' +
+    '<span class="pill">Levels <b>5</b></span>';
+
+  let html =
+    '<div class="hero">' +
+      '<h1>🕵️ Grammar Detective</h1>' +
+      '<p>Fifty criminal cases are waiting. Each case hides three code digits and one key ' +
+      'behind grammar locks. Search the scene, gather the evidence, identify the culprit, ' +
+      'and crack the safe to close the case.</p>' +
+    '</div>';
+
+  LEVELS.forEach(lv => {
+    const cases = CASES.filter(c => c.level === lv.id);
+    const solvedInLv = cases.filter(c => getP(c.id).solved).length;
+    html +=
+      '<section class="level" style="--c:' + lv.color + '">' +
+        '<div class="level-head">' +
+          '<div>' +
+            '<h2>' + esc(lv.name) + ' — ' + esc(lv.sub) + '</h2>' +
+            '<p>' + esc(lv.focus) + '</p>' +
+          '</div>' +
+          '<div class="badge" style="color:' + lv.color + '">' +
+            solvedInLv + ' / ' + cases.length +
+          '</div>' +
+        '</div>' +
+        '<div class="grid">';
+
+    cases.forEach(c => {
+      const p = peekP(c.id);
+      const num = c.level + '-' + String(CASES.filter(x => x.level === c.level).indexOf(c) + 1).padStart(2, '0');
+      html +=
+        '<button class="card' + (p.solved ? ' solved' : '') + '" data-case="' + c.id + '">' +
+          '<div>' +
+            '<div class="row">' +
+              '<span class="num">CASE ' + num + '</span>' +
+              '<span class="st">' + (p.solved ? '✅' : '📁') + '</span>' +
+            '</div>' +
+            '<h3>' + esc(c.title) + '</h3>' +
+          '</div>' +
+          '<span class="f">' + esc(c.focus) + '</span>' +
+        '</button>';
+    });
+
+    html += '</div></section>';
+  });
+
+  document.getElementById('app').innerHTML = html;
+
+  document.querySelectorAll('.card').forEach(el => {
+    el.onclick = () => {
+      state.caseId = parseInt(el.getAttribute('data-case'), 10);
+      state.view = 'case';
+      render();
+    };
+  });
+}
+
+/* ============ RENDER: CASE ============ */
+function renderCase(){
+  const c = CASES[state.caseId];
+  const p = getP(c.id);
+
+  const allDigits = p.digits.every(d => d !== null);
+  const ready = allDigits && p.hasKey;
+
+  let slotsHtml = '';
+  for(let i = 0; i < 3; i++){
+    const d = p.digits[i];
+    slotsHtml += '<div class="slot' + (d !== null ? ' filled' : '') + '">' +
+                 (d !== null ? d : '?') + '</div>';
+  }
+
+  let itemsHtml = '';
+  c.items.forEach((it, i) => {
+    const found = p.found.has(i);
+    let badge = '';
+    if(it.role === 'flavor') badge = '<span class="bg">clue</span>';
+    else if(it.role === 'key') badge = found ? '<span class="bg">found</span>' : '<span class="bg key">key lock</span>';
+    else badge = found ? '<span class="bg">found</span>' : '<span class="bg lock">code lock</span>';
+
+    itemsHtml +=
+      '<button class="item' + (found ? ' done' : '') + '" data-idx="' + i + '">' +
+        '<span class="em">' + it.emoji + '</span>' +
+        '<span class="nm">' + esc(it.name) + '</span>' +
+        badge +
+      '</button>';
+  });
+
+  /* ----- SOLVED ----- */
+  if(p.solved){
+    document.getElementById('app').innerHTML =
+      '<button class="back" id="backBtn">← Back to case files</button>' +
+      '<div class="case-hero">' +
+        '<div class="ch-meta">' +
+          '<span>CASE ' + c.level + '-' +
+            String(CASES.filter(x => x.level === c.level).indexOf(c) + 1).padStart(2, '0') + '</span>' +
+          '<span>' + esc(LEVELS.find(l => l.id === c.level).name) + '</span>' +
+          '<span>' + esc(c.room.e) + ' ' + esc(c.room.n) + '</span>' +
+        '</div>' +
+        '<h1>' + esc(c.title) + '</h1>' +
+      '</div>' +
+      '<div class="solved">' +
+        '<div class="stamp">🏆</div>' +
+        '<h2>Case Closed!</h2>' +
+        '<div class="culprit">' +
+          '<b>Culprit:</b> ' + esc(c.culprit) +
+        '</div>' +
+        '<div style="margin-top:20px">' +
+          '<button class="back" id="backBtn2">← Back to case files</button>' +
+        '</div>' +
+      '</div>';
+
+    const b1 = document.getElementById('backBtn');
+    const b2 = document.getElementById('backBtn2');
+    if(b1) b1.onclick = () => { state.view='home'; state.caseId=null; render(); };
+    if(b2) b2.onclick = () => { state.view='home'; state.caseId=null; render(); };
+    return;
+  }
+
+  /* ----- BOTTOM PANEL ----- */
+  let bottomHtml = '';
+
+  if(!ready){
+    /* Locked safe placeholder */
+    bottomHtml =
+      '<div class="safe locked">' +
+        '<h3>🔐 The Safe</h3>' +
+        '<div class="lockmsg">🔒 Locked — gather all three digits and the hidden key first.</div>' +
+        '<p>' +
+          'Digits found: ' + p.digits.filter(d => d !== null).length + ' / 3 · ' +
+          'Key: ' + (p.hasKey ? '✓ acquired' : '✗ missing') +
+        '</p>' +
+      '</div>';
+  } else if(!p.culpritPicked){
+    /* Suspect lineup */
+    const suspects = getSuspects(c);
+    let sHtml = '';
+    suspects.forEach((s, i) => {
+      sHtml +=
+        '<button class="suspect" data-si="' + i + '">' +
+          '<span class="sname">' + esc(s.name) + '</span>' +
+          '<span class="srole">' + esc(s.role) + '</span>' +
+        '</button>';
+    });
+
+    bottomHtml =
+      '<div class="suspects">' +
+        '<h3>🚨 Identify the Culprit</h3>' +
+        '<div class="sub">You have gathered all the evidence. Weigh the clues, then name the one who did it. Choose carefully — only the right suspect will unlock the safe.</div>' +
+        '<div class="suspect-grid" id="suspectGrid">' + sHtml + '</div>' +
+      '</div>';
+  } else {
+    /* Safe code entry */
+    bottomHtml =
+      '<div class="safe">' +
+        '<h3>🔐 The Safe</h3>' +
+        '<p>You have identified the culprit. Enter the 3-digit code to close the case.</p>' +
+        '<div class="coderow">' +
+          '<input id="codeIn" maxlength="3" inputmode="numeric" placeholder="•••">' +
+          '<button class="btn" id="tryBtn">Unlock</button>' +
+        '</div>' +
+        '<div class="msg" id="safeMsg"></div>' +
+      '</div>';
+  }
+
+  document.getElementById('app').innerHTML =
+    '<button class="back" id="backBtn">← Back to case files</button>' +
+    '<div class="case-hero">' +
+      '<div class="ch-meta">' +
+        '<span>CASE ' + c.level + '-' +
+          String(CASES.filter(x => x.level === c.level).indexOf(c) + 1).padStart(2, '0') + '</span>' +
+        '<span>' + esc(LEVELS.find(l => l.id === c.level).name) + '</span>' +
+        '<span>' + esc(c.room.e) + ' ' + esc(c.room.n) + '</span>' +
+      '</div>' +
+      '<h1>' + esc(c.title) + '</h1>' +
+      '<div class="story">' + esc(c.story) + '</div>' +
+      '<div style="margin-top:14px"><span style="font-size:.7rem;font-weight:700;color:#e8c25a;background:rgba(212,165,55,.1);border:1px solid rgba(212,165,55,.24);padding:5px 12px;border-radius:7px">' +
+        esc(c.focus) + '</span></div>' +
+    '</div>' +
+    '<div class="hud">' +
+      '<div class="col">' +
+        '<span class="lbl">SAFE CODE</span>' +
+        '<div class="slots">' + slotsHtml + '</div>' +
+      '</div>' +
+      '<div class="col">' +
+        '<span class="lbl">KEY</span>' +
+        '<span class="keychip' + (p.hasKey ? ' have' : '') + '">' +
+          (p.hasKey ? '🔑 Acquired' : '🔒 Missing') +
+        '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="scene">' +
+      '<div class="title">🔎 ' + esc(c.room.e) + ' ' + esc(c.room.n) +
+        ' — search the items below</div>' +
+      '<div class="items">' + itemsHtml + '</div>' +
+    '</div>' +
+    bottomHtml;
+
+  /* ----- BINDINGS ----- */
+  const back = document.getElementById('backBtn');
+  if(back) back.onclick = () => { state.view='home'; state.caseId=null; render(); };
+
+  /* Items */
+  document.querySelectorAll('.item').forEach(el => {
+    el.onclick = () => {
+      const i = parseInt(el.getAttribute('data-idx'), 10);
+      const it = c.items[i];
+      if(p.found.has(i)){
+        if(it.role === 'flavor'){
+          toast('💡 ' + it.clue);
+        } else {
+          toast('Already searched.');
+        }
+        return;
+      }
+      openQuestion(c.id, i);
+    };
+  });
+
+  /* Suspects */
+  const sg = document.getElementById('suspectGrid');
+  if(sg){
+    sg.querySelectorAll('.suspect').forEach(el => {
+      el.onclick = () => {
+        const idx = parseInt(el.getAttribute('data-si'), 10);
+        const list = getSuspects(c);
+        const s = list[idx];
+        const all = sg.querySelectorAll('.suspect');
+        all.forEach(x => x.disabled = true);
+        if(s.isCulprit){
+          el.classList.add('right');
+          p.culpritPicked = true;
+          toast('✓ Correct — ' + s.name + ' is the culprit!');
+          setTimeout(render, 900);
+        } else {
+          el.classList.add('wrong');
+          toast('✗ Not ' + s.name + '. Look at the clues again.');
+          setTimeout(() => {
+            all.forEach(x => { x.disabled = false; x.classList.remove('wrong'); });
+          }, 900);
+        }
+      };
+    });
+  }
+
+  /* Safe code */
+  const tryBtn = document.getElementById('tryBtn');
+  const codeIn = document.getElementById('codeIn');
+  const safeMsg = document.getElementById('safeMsg');
+
+  if(tryBtn && codeIn){
+    tryBtn.onclick = () => {
+      const v = (codeIn.value || '').trim();
+      if(!/^\d{3}$/.test(v)){
+        safeMsg.className = 'msg err';
+        safeMsg.textContent = 'Enter exactly 3 digits.';
+        return;
+      }
+      if(v === c.code){
+        p.solved = true;
+        safeMsg.className = 'msg ok';
+        safeMsg.textContent = '✓ Code accepted!';
+        toast('🏆 Case solved!');
+        setTimeout(render, 700);
+      } else {
+        safeMsg.className = 'msg err';
+        safeMsg.textContent = '✗ Wrong code. Try again.';
+        codeIn.value = '';
+      }
+    };
+    codeIn.addEventListener('keydown', e => {
+      if(e.key === 'Enter') tryBtn.click();
+    });
+    codeIn.addEventListener('input', () => {
+      codeIn.value = codeIn.value.replace(/\D/g, '').slice(0, 3);
+    });
+  }
+}
+
+/* ============ STATE + RENDER ============ */
+const state = { view: 'home', caseId: null };
+
+function render(){
+  closeModal();
+  if(state.view === 'home') renderHome();
+  else renderCase();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============ INIT ============ */
+render();
+</script>
+</body>
+</html>
